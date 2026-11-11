@@ -1,0 +1,15 @@
+{
+  "_comment": "Brands to protect against look-alike domains. Edit freely; this list is intentionally small.",
+  "brands": [
+    {"name": "paypal", "domains": ["paypal.com", "paypal.me"]},
+    {"name": "microsoft", "domains": ["microsoft.com", "microsoftonline.com", "live.com", "office.com"]},
+    {"name": "google", "domains": ["google.com", "google.com.vn", "gmail.com", "youtube.com"]},
+    {"name": "apple", "domains": ["apple.com", "icloud.com"]},
+    {"name": "amazon", "domains": ["amazon.com", "aws.amazon.com", "amazonaws.com"]},
+    {"name": "facebook", "domains": ["facebook.com", "fb.com", "meta.com"]},
+    {"name": "github", "domains": ["github.com", "github.io"]},
+    {"name": "vietcombank", "domains": ["vietcombank.com.vn"]},
+    {"name": "techcombank", "domains": ["techcombank.com", "techcombank.com.vn"]},
+    {"name": "momo", "domains": ["momo.vn"]}
+  ]
+}

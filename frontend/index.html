@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>ThreatLens · File &amp; URL Threat Intelligence Scanner</title>
+  <meta name="theme-color" content="#0a0c0b">
+  <link rel="stylesheet" href="/scanner/static/style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top">
+    <div class="wrap top-in">
+      <a class="brand" href="/scanner" aria-label="ThreatLens home">
+        <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true">
+          <circle cx="14" cy="14" r="9.5" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="14" cy="14" r="4" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".55"/>
+          <path d="M21 21l8 8" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+          <circle cx="14" cy="14" r="1.4" fill="currentColor"/>
+        </svg>
+        <span><strong>THREATLENS</strong><small>File &amp; URL Threat Intelligence Scanner</small></span>
+      </a>
+      <nav aria-label="Sections">
+        <div class="tabs" role="tablist">
+          <button role="tab" id="tab-file" aria-controls="panel-file" aria-selected="true" data-tab="file">File Scanner</button>
+          <button role="tab" id="tab-url" aria-controls="panel-url" aria-selected="false" data-tab="url" tabindex="-1">URL Scanner</button>
+          <button role="tab" id="tab-history" aria-controls="panel-history" aria-selected="false" data-tab="history" tabindex="-1">Scan History</button>
+          <button role="tab" id="tab-about" aria-controls="panel-about" aria-selected="false" data-tab="about" tabindex="-1">Methodology</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="wrap">
+    <section class="caps" aria-label="Engine status"><ul id="caps"><li class="muted">Checking engines…</li></ul></section>
+
+    <section id="panel-file" role="tabpanel" aria-labelledby="tab-file">
+      <div id="drop" class="drop" tabindex="0" role="button" aria-describedby="drop-hint">
+        <svg viewBox="0 0 48 48" width="44" height="44" aria-hidden="true"><path d="M24 32V10m0 0l-8 8m8-8l8 8M8 34v4h32v-4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p class="drop-title">Drop a file here, or press Enter to choose one</p>
+        <p id="drop-hint" class="muted">PDF, DOCX, XLSX, PPTX, ZIP, TXT, PNG/JPG, executables · up to <span id="maxmb">20</span> MB · the file is analysed statically, never opened or run, and deleted after the scan</p>
+        <input id="file" type="file" hidden>
+      </div>
+      <div id="file-status" class="status" hidden aria-live="polite">
+        <div class="status-row"><span id="fs-name" class="mono"></span><span id="fs-state" class="pill"></span></div>
+        <progress id="fs-bar" max="100" value="0" aria-label="Scan progress"></progress>
+        <p id="fs-msg" class="muted"></p>
+      </div>
+    </section>
+
+    <section id="panel-url" role="tabpanel" aria-labelledby="tab-url" hidden>
+      <form id="url-form" class="urlform" novalidate>
+        <label for="url">URL to assess</label>
+        <div class="urlrow">
+          <input id="url" name="url" type="text" inputmode="url" autocomplete="off" spellcheck="false" maxlength="4096" placeholder="https://example.com/path" required>
+          <button class="btn" type="submit">Analyse URL</button>
+        </div>
+        <p class="muted">ThreatLens does not visit the address. It analyses the text of the URL and asks configured reputation sources.</p>
+        <p id="url-msg" class="err" role="alert"></p>
+      </form>
+    </section>
+
+    <section id="panel-history" role="tabpanel" aria-labelledby="tab-history" hidden>
+      <form id="hist-form" class="filters">
+        <label>Search <input id="hist-q" type="search" placeholder="file name, URL or SHA-256" maxlength="200"></label>
+        <label>Status
+          <select id="hist-v"><option value="">All</option><option>MALICIOUS</option><option>SUSPICIOUS</option><option>INCONCLUSIVE</option><option>CLEAN_WITHIN_CHECKED_SCOPE</option></select>
+        </label>
+        <button class="btn ghost" type="submit">Apply</button>
+      </form>
+      <div class="tablewrap"><table id="hist"><thead><tr><th>When</th><th>Type</th><th>Target</th><th>Status</th><th><span class="sr">Actions</span></th></tr></thead><tbody></tbody></table></div>
+      <p id="hist-empty" class="muted" hidden>No reports match.</p>
+    </section>
+
+    <section id="panel-about" role="tabpanel" aria-labelledby="tab-about" hidden class="prose">
+      <h2>How ThreatLens reaches a status</h2>
+      <p>Every status is computed from findings produced by deterministic engines. No language model takes part in detection.</p>
+      <dl class="defs">
+        <dt class="v-MALICIOUS">MALICIOUS</dt><dd>An antivirus signature matched, or a reputation source lists the item as malicious.</dd>
+        <dt class="v-SUSPICIOUS">SUSPICIOUS</dt><dd>At least one indicator of medium severity or higher. Indicators are reasons to be careful, not proof of malware.</dd>
+        <dt class="v-INCONCLUSIVE">INCONCLUSIVE</dt><dd>A required check could not run or could not cover the whole item, so no statement about it is justified.</dd>
+        <dt class="v-CLEAN_WITHIN_CHECKED_SCOPE">CLEAN WITHIN CHECKED SCOPE</dt><dd>Every required check completed and found nothing. This is not a guarantee that the item is safe.</dd>
+      </dl>
+      <h2>What is not checked</h2>
+      <ul>
+        <li>Files are never executed; there is no sandbox or behavioural analysis.</li>
+        <li>Submitted URLs are never visited: page content, redirects and certificates are unknown to the tool.</li>
+        <li>Macro code is detected by presence only. Scanned (image-only) PDFs, QR codes and legacy .doc/.xls files are not inspected structurally.</li>
+        <li>Brand look-alike detection covers only the brands in <span class="mono">config/brands.json</span>.</li>
+      </ul>
+      <h2>Privacy</h2>
+      <p>Uploads are stored under a random name outside the web root and deleted when the scan ends. Only the SHA-256 hash is sent to a reputation provider, and only if you configured an API key. Reports stay in a local database until you delete them.</p>
+    </section>
+
+    <section id="report" class="report" hidden aria-live="polite" tabindex="-1"></section>
+  </main>
+
+  <footer class="wrap foot">
+    <p>ThreatLens supports risk assessment. It cannot establish that a file or website is safe.</p>
+  </footer>
+  <script src="/scanner/static/app.js" defer></script>
+</body>
+</html>

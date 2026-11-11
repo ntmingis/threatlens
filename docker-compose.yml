@@ -1,0 +1,23 @@
+# NOT tested in v0.1. Signature database: run `freshclam` on the host (or a freshclam container)
+# into ./clamav-db before starting; without it ClamAV reports DB_MISSING and files are INCONCLUSIVE.
+services:
+  threatlens:
+    build: .
+    ports:
+      - "127.0.0.1:8000:8000"      # loopback only; put an authenticating proxy in front for any wider use
+    env_file: [.env]
+    environment:
+      THREATLENS_CLAMAV_DB: /clamav-db
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    pids_limit: 128
+    mem_limit: 2g
+    cpus: 2
+    tmpfs:
+      - /tmp:size=256m,noexec,nosuid
+    volumes:
+      - threatlens-data:/data
+      - ./clamav-db:/clamav-db:ro
+volumes:
+  threatlens-data:
